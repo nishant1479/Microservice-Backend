@@ -18,7 +18,7 @@ type Config struct {
 	AppVersion string
 	Server     Server
 	Logger     Logger
-	Jeager     Jeager
+	Jaeger     Jaeger
 	Metrics    Metrics
 	MongoDB    MongoDB
 	Kafka      Kafka
@@ -68,8 +68,8 @@ type Metrics struct{
 }
 
 
-// Configuration of the Jeager
-type Jeager struct{
+// Configuration of the Jaeger
+type Jaeger struct{
 	Host		string
 	ServiceName	string
 	LogSpans	bool
@@ -125,6 +125,6 @@ func ParseConfig() (*Config,error) {
 	if httpPort != "" {
 		c.Http.Port = httpPort
 	}
-	
+
 	return &c,nil
 }

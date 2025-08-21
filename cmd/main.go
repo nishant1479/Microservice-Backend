@@ -5,6 +5,9 @@ import (
 	"log"
 
 	"github.com/nishant1479/Microservice-Backend/config"
+	jaeger "github.com/nishant1479/Microservice-Backend/pkg/Jaeger"
+	"github.com/nishant1479/Microservice-Backend/pkg/logger"
+	"github.com/opentracing/opentracing-go"
 )
 
 func main() {
@@ -17,4 +20,24 @@ func main() {
 	}
 
 	appLogger := logger.NewApiLogger(cfg)
+	appLogger.InitLogger()
+	appLogger.Info("Starting user server")
+	appLogger.Infof(
+		"AppVersion: %s, LogLevel: %s,DevelopmentMode: %s",
+		cfg.AppVersion,
+		cfg.Logger.Level,
+		cfg.Server.Development,
+	)
+	appLogger.Infof("Success parsed config: %#v",cfg.AppVersion)
+
+	tracer, closer,err := jaeger.InitJaeger(cfg)
+	if err != nil {
+		appLogger.Fatal("cannot create tracer",err)
+	}
+	appLogger.Info("Jaeger connected")
+
+	
+	opentracing.SetGlobalTracer(tracer)
+	defer closer.Close()
+	appLogger.Info("Opentracing connected")
 }
