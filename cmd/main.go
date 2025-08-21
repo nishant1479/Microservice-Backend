@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"log"
+
+	"github.com/nishant1479/Microservice-Backend/config"
 )
 
 func main() {
@@ -13,4 +15,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	appLogger := logger.NewApiLogger(cfg)
 }

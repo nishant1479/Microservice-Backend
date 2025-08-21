@@ -81,7 +81,7 @@ func (l *apiLogger) InitLogger(){
 	}
 
 	encoderCfg.EncodeTime = zapcore.ISO8601TimeEncoder
-	core := zapcore.Newcore(encoder,logWriter,zap.NewAtomicLevelAt(logLevel))
+	core := zapcore.NewCore(encoder,logWriter,zap.NewAtomicLevelAt(logLevel))
 	logger := zap.New(core,zap.AddCaller(),zap.AddCallerSkip(1))
 
 	l.sugarLogger = logger.Sugar()
@@ -89,3 +89,46 @@ func (l *apiLogger) InitLogger(){
 		l.sugarLogger.Error(err)
 	}
 }
+
+
+// Logger methods
+
+func (l *apiLogger)	Debug(args ...interface{}){
+	l.sugarLogger.Debug(args...)
+}
+func (l *apiLogger) Debugf(template string,args ...interface{}){
+	l.sugarLogger.Debugf(template,args...)
+}
+func (l *apiLogger) Info(args ...interface{}){
+	l.sugarLogger.Info(args...)
+}
+func (l *apiLogger) Infof(template string,args ...interface{}){
+	l.sugarLogger.Infof(template,args...)
+}
+func (l *apiLogger) Warn(args ...interface{}){
+	l.sugarLogger.Warn(args...)
+}
+func (l *apiLogger) Warnf(template string,args ...interface{}){
+	l.sugarLogger.Warnf(template,args...)
+}
+func (l *apiLogger) Error(args ...interface{}){
+	l.sugarLogger.Error(args...)
+}
+func (l *apiLogger) Errorf(template string,args ...interface{}){
+	l.sugarLogger.Errorf(template,args...)
+}
+func (l *apiLogger) DPanic(args ...interface{}){
+	l.sugarLogger.DPanic(args...)
+}
+func (l *apiLogger) DPanicf(template string,args ...interface{}){
+	l.sugarLogger.DPanicf(template,args...)
+}
+func (l *apiLogger) Fatal(args ...interface{}){
+	l.sugarLogger.Fatal(args...)
+}
+func (l *apiLogger) Fatalf(template string,args ...interface{}){
+	l.sugarLogger.Fatalf(template,args...)
+}
+func (l *apiLogger) Printf(template string,args ...interface{}){
+		l.sugarLogger.Infof(template,args...)
+}	
