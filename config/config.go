@@ -1,6 +1,12 @@
 package config
 
-import "time"
+import (
+	"log"
+	"os"
+	"time"
+
+	"github.com/spf13/viper"
+)
 
 const (
 	GRPC_PORT = "GRPC_PORT"
@@ -61,12 +67,16 @@ type Metrics struct{
 	ServiceName	string
 }
 
+
+// Configuration of the Jeager
 type Jeager struct{
 	Host		string
 	ServiceName	string
 	LogSpans	bool
 }
 
+
+// Configuration of the MongoDB
 type MongoDB struct{
 	URI			string
 	User		string
@@ -74,10 +84,14 @@ type MongoDB struct{
 	DB			string
 }
 
+
+// Configuration of the Kafka
 type Kafka struct{
 	Brokers []string
 }
 
+
+// Configuration of the Redis
 type Redis struct{
 	RedisAddr		string
 	RedisPassword	string
@@ -91,3 +105,26 @@ type Redis struct{
 }
 
 
+// Parse Configuration file
+func ParseConfig() (*Config,error) {
+	var c Config
+	err := viper.Unmarshal(&c)
+
+	if err != nil{
+		log.Printf("unable to decode into struct, %v",err)
+		return nil, err
+	}
+
+	gRPCPort := os.Getenv(GRPC_PORT)
+
+	if gRPCPort != "" {
+		c.Server.Port = gRPCPort
+	}
+
+	httpPort := os.Getenv(HTTP_PORT)
+	if httpPort != "" {
+		c.Http.Port = httpPort
+	}
+	
+	return &c,nil
+}
