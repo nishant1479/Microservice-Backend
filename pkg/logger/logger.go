@@ -1,13 +1,11 @@
 package logger
 
 import (
-	"html/template"
 	"os"
 
 	"github.com/nishant1479/Microservice-Backend/config"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"golang.org/x/tools/go/cfg"
 )
 
 type Logger interface {
@@ -64,7 +62,7 @@ func (l *apiLogger) InitLogger(){
 
 	var encoderCfg zapcore.EncoderConfig
 	if l.cfg.Server.Development{
-		encodercfg = zap.NewDevelopmentEncoderConfig()
+		encoderCfg = zap.NewDevelopmentEncoderConfig()
 	} else {
 		encoderCfg = zap.NewProductionEncoderConfig()
 	}
