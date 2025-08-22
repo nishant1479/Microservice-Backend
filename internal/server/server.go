@@ -47,5 +47,9 @@ func (s *server) Run() error{
 	
 	productsProducer := kafka.NewProductsProducer(s.log,s.cfg)
 	
+	im := interceptors.NewInterceptorManger(s.log,s.cfg)
+	mw := middleware.NewMiddlewareManger(s.log,s.cfg)
+
+	
 	return nil
 }
