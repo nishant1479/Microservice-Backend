@@ -1,11 +1,18 @@
 package v1
 
 import (
+	"errors"
+	"net/http"
+	"strconv"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"github.com/nishant1479/Microservice-Backend/internal/middleware"
+	"github.com/nishant1479/Microservice-Backend/internal/models"
 	"github.com/nishant1479/Microservice-Backend/internal/product"
 	"github.com/nishant1479/Microservice-Backend/pkg/logger"
+	"github.com/opentracing/opentracing-go"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type productHandlers struct {
@@ -26,10 +33,128 @@ func newProductHandlers(
 	return &productHandlers{log: log,productUC: productUC,validate: &validate,group: group,mw: mw}
 }
 
-CreateProduct()
+func (p*productHandlers) CreateProduct() echo.HandlerFunc{
+	return func(c echo.Context) error {
+		span,ctx := opentracing.StartSpanFromContext(c.Request().Context(),"productHandlers.Create")
+		defer span.Finish()
+		createRequests.Inc()
 
-UpdateProduct()
+		var prod models.Product
+		if err := c.Bind(&prod); err !=nil {
+			p.log.Errorf("c.Bind: %v",err)
+			return httpErrors.ErrorCtxResponse(c,err)
+		}
 
-GetByIDProduct()
+		if err := p.validate.StructCtx(ctx, &prod); err != nil {
+			p.log.Errorf("validate.StructCtx: %v",err)
+			return httpErrors.ErrorCtxResponse(c,err)
+		}
 
-SearchProduct()
+		if err := p.productUC.PublishCreate(ctx, &prod); err != nil {
+			p.log.Errorf("productUC.PublishCreate: %v",err)
+			return httpErrors.ErrorCtxResponse(c,err)
+		}
+
+		succesRequests.Inc()
+		return c.NoContent(http.StatusCreated)
+	}
+}
+
+func (p*productHandlers) UpdateProduct() echo.HandlerFunc{
+	return func(c echo.Context) error {
+		span, ctx := opentracing.StartSpanFromContext(c.Request().Context(),"productHandlers.Update")
+		defer span.Finish()
+		updateRequests.Inc()
+
+		var prod models.Product
+		if err := c.Bind(&prod); err != nil {
+			p.log.Errorf("c.Bind: %v", err)
+			errorRequests.Inc()
+			return httpErrors.ErrorCtxResponse(c,err)
+		}
+
+		prodID, err := primitive.ObjectIDFromHex(c.Param("product_id"))
+		if err != nil {
+			p.log.Errorf("primitive.ObjectIDFromHex: %v",err)
+			errorRequests.Inc()
+			return httpErrors.ErrorCtxResponse(c,err)
+		}
+
+		prod.ProductID = prodID
+
+		if err := p.validate.StructCtx(ctx, &prod); err != nil {
+			p.log.Errorf("validate.StructCtx: %v", err)
+			errorRequests.Inc()
+			return httpErrors.ErrorCtxResponse(c, err)
+		}
+
+		if err := p.productUC.PublishUpdate(ctx, &prod); err != nil {
+			p.log.Errorf("productUC.PublishUpdate: %v", err)
+			return httpErrors.ErrorCtxResponse(c, err)
+		}
+
+		successRequests.Inc()
+		return c.NoContent(http.StatusOK)
+		
+	}
+}
+
+func (p*productHandlers) GetByIDProduct() echo.HandlerFunc{
+		return func(c echo.Context) error {
+		span, ctx := opentracing.StartSpanFromContext(c.Request().Context(),"productHandlers.GetByProduct")
+		defer span.Finish()
+		getByIdRequests.Inc()
+
+		objectID, err := primitive.ObjectIDFromHex(c.Param("product_id"))
+		if err != nil {
+			p.log.Errorf("primitive.ObjectIDFromHex: %v",err)
+			errorRequests.Inc()
+			return httpErrors.ErrorCtxResponse(c,err)
+		}
+		
+		prod,err := p.productUC.GetByIDProduct(ctx,objectID)
+		if  err != nil {
+			p.log.Errorf("productUC.PublishUpdate: %v", err)
+			errorRequests.Inc()
+			return httpErrors.ErrorCtxResponse(c, err)
+		}
+
+		successRequests.Inc()
+		return c.NoContent(http.StatusOK)
+		
+	}
+}
+
+func (p *productHandlers) SearchProduct() echo.HandlerFunc{
+		return func(c echo.Context) error {
+		span, ctx := opentracing.StartSpanFromContext(c.Request().Context(),"productHandlers.SearchProduct")
+		defer span.Finish()
+		SearchRequests.Inc()
+
+		page,err := strconv.Atoi(c.QueryParam("page"))
+		if err != nil {
+			p.log.Errorf("strconv.Atoi: %v", err)
+			errorRequests.Inc()
+			return httpErrors.ErrorCtxResponse(c,httpErrors.BadRequest)
+		}
+
+		size,err := strconv.Atoi(c.QueryParam("size"))
+		if err != nil {
+			p.log.Errorf("strconv.Atoi: %v",err)
+			errorRequests.Inc()
+			return httpErrors.ErrorCtxResponse(c,httpErrors.BadRequest)
+		}
+		pq := utils.NewPaginationQuery(size,page)
+		result,err := p.productUC.Search(ctx,c.QueryParam("search"),pq)
+
+		if err != nil {
+			p.log.Errorf("productUC.Search: %v",err)
+			errorRequests.Inc()
+			return httpErrors.ErrorCtxResponse(c,err)
+		}
+
+		successRequests.Inc()
+		return c.NoContent(http.StatusOK)
+		
+	}
+}
