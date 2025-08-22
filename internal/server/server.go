@@ -44,5 +44,8 @@ func (s *server) Run() error{
 	defer cancel()
 
 	validate := validator.New()
-
+	
+	productsProducer := kafka.NewProductsProducer(s.log,s.cfg)
+	
+	return nil
 }
