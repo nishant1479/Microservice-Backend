@@ -40,4 +40,23 @@ func main() {
 	opentracing.SetGlobalTracer(tracer)
 	defer closer.Close()
 	appLogger.Info("Opentracing connected")
+
+	mongoDBConn := cfg.MongoDB
+	conn ,err := kafka.NewKafkaConn(cfg)
+	if err != nil {
+		appLogger.Fatal("NewKafkaConn",err)
+	}
+	defer conn.Close()
+	brokers,err := conn.Brokers()
+	if err != nil {
+		appLogger.Fatal("conn.Brokers",err)
+	}
+	appLogger.Infof("Kafka connected: %v",brokers)
+
+	redisClient := redis.NewRedisClient(cfg)
+	appLogger.Info("Redis connected")
+
+	s:= server.NewServer(appLogger,cfg,tracer,mongoDBConn,redisClient)
+	appLogger.Fatal(s.Run())
+
 }
