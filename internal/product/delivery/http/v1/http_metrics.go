@@ -12,22 +12,22 @@ var (
 	})
 	errorRequests = promauto.NewCounter(prometheus.CounterOpts{
 	Name: "https_products_success_incoming_messages_total",
-		Help: "The total number of succes incoming succes HTTP requests",
+		Help: "The total number of error incoming succes HTTP requests",
 	})
 	createRequests = promauto.NewCounter(prometheus.CounterOpts{
 Name: "https_products_success_incoming_messages_total",
-		Help: "The total number of succes incoming succes HTTP requests",
+		Help: "The total number of incoming create product HTTP requests",
 	})
 	updateRequests = promauto.NewCounter(prometheus.CounterOpts{
 Name: "https_products_success_incoming_messages_total",
-		Help: "The total number of succes incoming succes HTTP requests",
+		Help: "The total number of incoming update product HTTP requests",
 	})
 	getByIdRequests = promauto.NewCounter(prometheus.CounterOpts{
 Name: "https_products_success_incoming_messages_total",
-		Help: "The total number of succes incoming succes HTTP requests",
+		Help: "The total number of incoming getByIdRequests product HTTP requests",
 	})
-	SearchRequests = promauto.NewCounter(prometheus.CounterOpts{
+	searchRequests = promauto.NewCounter(prometheus.CounterOpts{
 Name: "https_products_success_incoming_messages_total",
-		Help: "The total number of succes incoming succes HTTP requests",
+		Help: "The total number of incoming search product HTTP requests",
 	})
 )

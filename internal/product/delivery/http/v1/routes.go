@@ -8,7 +8,7 @@ import (
 
 func (p *productHandlers) MapRoutes() {
 
-	p.group.Get("/test", func(c echo.Context)error{
+	p.group.GET("/test", func(c echo.Context)error{
 		return c.String(http.StatusOK,"Hello form test endpoint")
 	})
 	p.group.POST("",p.CreateProduct())

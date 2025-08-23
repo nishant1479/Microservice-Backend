@@ -18,11 +18,11 @@ type productService struct {
 	validate	*validator.validate
 }
 
-func NewProductService(log logger.Logger, productUC product.UseCase, validator.Validate) *productService{
-	return &productService{log: log.productUC: productUC,validate: validate}
+func NewProductService(log logger.Logger, productUC product.UseCase, validate *validator.Validate) *productService{
+	return &productService{log: log,productUC: productUC,validate: validate}
 }
 
-func (p *productService) Create(ctx context.Context, req *productsService.CreateReq) {
+func (p *productService) Create(ctx context.Context, req *productsService.CreateReq)  (*productsService.CreateRes,error) {
 	span,ctx = opentracing.StartSpanFromContext(ctx, "productService.Create")
 	defer span.Finish()
 	createMessages.Inc()
