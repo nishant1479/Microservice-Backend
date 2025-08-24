@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	productsService "github.com/nishant1479/Microservice-Backend/proto/product"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -16,7 +17,7 @@ type Product struct {
 	ImageURL	*string				`json:"imageUrl,omitempty" bson:"imageUrl,omitempty"`
 	Photos		[]string			`json:"photos,omitempty" bson:"photos,omitempty"`
 	Quantity	int64				`json:"quantity,omitempty" bson:"quantity,omitempty" validate:"required"`
-	Rating		int					`json:"rating,omitempty" bson:"rating,omitempty" validate:"required,min=0,max=10"`
+	Rating		int64				`json:"rating,omitempty" bson:"rating,omitempty" validate:"required,min=0,max=10"`
 	CreatedAt	time.Time			`json:"createdAt,omitempty" bson:"createdAt,omitempty"`
 	UpdatedAt	time.Time			`json:"updatedAt,omitempty" bson:"updatedAt,omitempty"`
 }
@@ -37,7 +38,7 @@ func (p *Product) ToProto() *productsService.Product {
 		Name:		p.Name,
 		Description:p.Description,
 		Price:		p.Price,
-		ImageURL:	p.GetImage(),
+		ImageURl:	p.GetImage(),
 		Photos:		p.Photos,
 		Quantity:	p.Quantity,
 		Rating:		p.Rating,
@@ -51,7 +52,7 @@ func ProductFromProto(product *productsService.Product) (*Product,error) {
 	if err != nil {
 		return nil, err
 	}
-	catID,err := primitive.ObjectIDFromHex(product.CategoryID())
+	catID,err := primitive.ObjectIDFromHex(product.GetDescription())
 	if err != nil {
 		return nil, err
 	}
@@ -61,10 +62,10 @@ func ProductFromProto(product *productsService.Product) (*Product,error) {
 		Name: product.GetName(),
 		Description: product.GetDescription(),
 		Price:       product.GetPrice(),
-		ImageURL:    &product.ImageURL,
+		ImageURL:    &product.ImageURl,
 		Photos:      product.GetPhotos(),
 		Quantity:    product.GetQuantity(),
-		Rating:      int(product.GetRating()),
+		Rating:      int64(product.GetRating()),
 		CreatedAt:   product.GetCreatedAt().AsTime(),
 		UpdatedAt:   product.GetUpdatedAt().AsTime(),
 	}, nil
