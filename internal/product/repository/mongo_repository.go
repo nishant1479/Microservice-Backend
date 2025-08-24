@@ -5,6 +5,7 @@ import (
 	"time"
 	"github.com/pkg/errors"
 productErrors "github.com/nishant1479/Microservice-Backend/pkg/product_errors"
+	"github.com/nishant1479/Microservice-Backend/pkg/utlis"
 	"github.com/nishant1479/Microservice-Backend/internal/models"
 	"github.com/opentracing/opentracing-go"
 	"go.mongodb.org/mongo-driver/bson"
@@ -83,7 +84,7 @@ func (p *productMongoRep) GetByID(ctx context.Context, productID primitive.Objec
 	return &prod,nil
 }
 
-func (p *productMongoRep) Search(ctx context.Context, search string, pagination *utils.Pagination) ( *models.ProductsList, error){
+func (p *productMongoRep) Search(ctx context.Context, search string, pagination *utlis.Pagination) ( *models.ProductsList, error){
 	span, ctx := opentracing.StartSpanFromContext(ctx, "productMongoRepo.Search")
 	defer span.Finish()
 

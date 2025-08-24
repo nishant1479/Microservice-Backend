@@ -6,11 +6,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/go-redis/redis"
-	"github.com/nishant1479/Microservice-Backend/internal/models"
+	"github.com/go-redis/redis/v8"
 	"github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+
+	"github.com/nishant1479/Microservice-Backend/internal/models"
 )
 
 const (
@@ -36,7 +37,7 @@ func (p *productRedisRepository) setProduct(ctx context.Context, product *models
 
 	prodBytes, err := json.Marshal(product)
 	if err != nil {
-		return error.Wrap(err, "productRedisRepository.Marshal")
+		return errors.Wrap(err, "productRedisRepository.Marshal")
 	}
 
 	return p.redis.SetEX(ctx, p.createKey(product.ProductID),string(prodBytes),expiration).Err()

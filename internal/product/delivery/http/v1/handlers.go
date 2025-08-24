@@ -6,12 +6,17 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
+	"github.com/opentracing/opentracing-go"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+
+
 	"github.com/nishant1479/Microservice-Backend/internal/middleware"
 	"github.com/nishant1479/Microservice-Backend/internal/models"
 	"github.com/nishant1479/Microservice-Backend/internal/product"
+	httpErrors "github.com/nishant1479/Microservice-Backend/pkg/http_errors"
+
 	"github.com/nishant1479/Microservice-Backend/pkg/logger"
-	"github.com/opentracing/opentracing-go"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"github.com/nishant1479/Microservice-Backend/pkg/utlis"
 )
 
 type productHandlers struct {
@@ -92,8 +97,8 @@ func (p*productHandlers) UpdateProduct() echo.HandlerFunc{
 			return httpErrors.ErrorCtxResponse(c, err)
 		}
 
-		successRequests.Inc()
-		return c.NoContent(http.StatusOK)
+		succesRequests.Inc()
+		return c.NoContent(http.StatusCreated)
 		
 	}
 }
@@ -111,15 +116,15 @@ func (p*productHandlers) GetByIDProduct() echo.HandlerFunc{
 			return httpErrors.ErrorCtxResponse(c,err)
 		}
 		
-		prod,err := p.productUC.GetByIDProduct(ctx,objectID)
+		prod,err := p.productUC.GetByID(ctx,objectID)
 		if  err != nil {
 			p.log.Errorf("productUC.PublishUpdate: %v", err)
 			errorRequests.Inc()
 			return httpErrors.ErrorCtxResponse(c, err)
 		}
 
-		successRequests.Inc()
-		return c.NoContent(http.StatusOK)
+		succesRequests.Inc()
+		return c.JSON(http.StatusOK,prod)
 		
 	}
 }
@@ -128,7 +133,7 @@ func (p *productHandlers) SearchProduct() echo.HandlerFunc{
 		return func(c echo.Context) error {
 		span, ctx := opentracing.StartSpanFromContext(c.Request().Context(),"productHandlers.SearchProduct")
 		defer span.Finish()
-		SearchRequests.Inc()
+		searchRequests.Inc()
 
 		page,err := strconv.Atoi(c.QueryParam("page"))
 		if err != nil {
@@ -143,7 +148,7 @@ func (p *productHandlers) SearchProduct() echo.HandlerFunc{
 			errorRequests.Inc()
 			return httpErrors.ErrorCtxResponse(c,httpErrors.BadRequest)
 		}
-		pq := utils.NewPaginationQuery(size,page)
+		pq := utlis.NewPaginationQuery(size,page)
 		result,err := p.productUC.Search(ctx,c.QueryParam("search"),pq)
 
 		if err != nil {
@@ -152,8 +157,8 @@ func (p *productHandlers) SearchProduct() echo.HandlerFunc{
 			return httpErrors.ErrorCtxResponse(c,err)
 		}
 
-		successRequests.Inc()
-		return c.NoContent(http.StatusOK)
+		succesRequests.Inc()
+		return c.JSON(http.StatusOK, result)
 		
 	}
 }
