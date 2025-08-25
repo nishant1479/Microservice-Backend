@@ -4,7 +4,7 @@
 // - protoc             v6.32.0--rc1
 // source: product.proto
 
-package product
+package __
 
 import (
 	context "context"
@@ -32,7 +32,7 @@ type ProductsServiceClient interface {
 	Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateResponse, error)
 	Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*UpdateResponse, error)
 	GetByID(ctx context.Context, in *GetByIDRequest, opts ...grpc.CallOption) (*GetByIDResponse, error)
-	Search(ctx context.Context, in *SearchReq, opts ...grpc.CallOption) (*SearchResponse, error)
+	Search(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (*SearchResponse, error)
 }
 
 type productsServiceClient struct {
@@ -73,7 +73,7 @@ func (c *productsServiceClient) GetByID(ctx context.Context, in *GetByIDRequest,
 	return out, nil
 }
 
-func (c *productsServiceClient) Search(ctx context.Context, in *SearchReq, opts ...grpc.CallOption) (*SearchResponse, error) {
+func (c *productsServiceClient) Search(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (*SearchResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SearchResponse)
 	err := c.cc.Invoke(ctx, ProductsService_Search_FullMethodName, in, out, cOpts...)
@@ -90,7 +90,7 @@ type ProductsServiceServer interface {
 	Create(context.Context, *CreateRequest) (*CreateResponse, error)
 	Update(context.Context, *UpdateRequest) (*UpdateResponse, error)
 	GetByID(context.Context, *GetByIDRequest) (*GetByIDResponse, error)
-	Search(context.Context, *SearchReq) (*SearchResponse, error)
+	Search(context.Context, *SearchRequest) (*SearchResponse, error)
 	mustEmbedUnimplementedProductsServiceServer()
 }
 
@@ -110,7 +110,7 @@ func (UnimplementedProductsServiceServer) Update(context.Context, *UpdateRequest
 func (UnimplementedProductsServiceServer) GetByID(context.Context, *GetByIDRequest) (*GetByIDResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetByID not implemented")
 }
-func (UnimplementedProductsServiceServer) Search(context.Context, *SearchReq) (*SearchResponse, error) {
+func (UnimplementedProductsServiceServer) Search(context.Context, *SearchRequest) (*SearchResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Search not implemented")
 }
 func (UnimplementedProductsServiceServer) mustEmbedUnimplementedProductsServiceServer() {}
@@ -189,7 +189,7 @@ func _ProductsService_GetByID_Handler(srv interface{}, ctx context.Context, dec 
 }
 
 func _ProductsService_Search_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SearchReq)
+	in := new(SearchRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -201,7 +201,7 @@ func _ProductsService_Search_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: ProductsService_Search_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProductsServiceServer).Search(ctx, req.(*SearchReq))
+		return srv.(ProductsServiceServer).Search(ctx, req.(*SearchRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

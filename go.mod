@@ -10,7 +10,7 @@ require (
 	github.com/redis/go-redis v6.15.9+incompatible
 	github.com/spf13/viper v1.20.1
 	github.com/uber/jaeger-lib v2.4.1+incompatible
-	google.golang.org/protobuf v1.36.7
+	google.golang.org/protobuf v1.36.8
 )
 
 require (
@@ -61,6 +61,7 @@ require (
 )
 
 require (
+	github.com/avast/retry-go v3.0.0+incompatible
 	github.com/fsnotify/fsnotify v1.8.0 // indirect
 	github.com/go-playground/validator/v10 v10.27.0
 	github.com/go-redis/redis v6.15.9+incompatible

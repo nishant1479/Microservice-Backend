@@ -4,13 +4,17 @@ import (
 	"context"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/opentracing/opentracing-go"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+
+
 	"github.com/nishant1479/Microservice-Backend/internal/models"
 	"github.com/nishant1479/Microservice-Backend/internal/product"
 	"github.com/nishant1479/Microservice-Backend/pkg/logger"
-	grpcErrors "github.com/nishant1479/Microservice-Backend/pkg/grpc_errors"
+	"github.com/nishant1479/Microservice-Backend/pkg/utlis"
+
+	grpcErrors 		"github.com/nishant1479/Microservice-Backend/pkg/grpc_errors"
 	productsService "github.com/nishant1479/Microservice-Backend/proto/product"
-	"github.com/opentracing/opentracing-go"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type productService struct {
@@ -34,13 +38,13 @@ func (p *productService) Create(ctx context.Context, req *productsService.Create
 		p.log.Errorf("primitive.ObjectIDFromHex: %v", err)
 		return nil, grpcErrors.ErrorResponse(err, err.Error())
 	}
-
+	url := req.GetImageURL()
 	prod := &models.Product{
 		CategoryID:		catID,
 		Name:			req.GetName(),
 		Description:	req.GetDescription(),
 		Price:			req.GetPrice(),
-		ImageURL:		&req.ImageURL(),
+		ImageURL:		&url,
 		Photos:			req.GetPhotos(),
 		Quantity:		req.GetQuantity(),
 		Rating:			int64(req.GetRating()),
@@ -76,14 +80,14 @@ func (p *productService) Update(ctx context.Context, req *productsService.Update
 		p.log.Errorf("primitive.ObjectIDFromHex: %v", err)
 		return nil, grpcErrors.ErrorResponse(err, err.Error())
 	}
-
+	url := req.GetImageURL()
 	prod := &models.Product{
 		ProductID:		prodID,
 		CategoryID:		catID,
 		Name:			req.GetName(),
 		Description:	req.GetDescription(),
 		Price:			req.GetPrice(),
-		ImageURL:		&req.ImageURL(),
+		ImageURL:		&url,
 		Photos:			req.GetPhotos(),
 		Quantity:		req.GetQuantity(),
 		Rating:			int64(req.GetRating()),
@@ -123,12 +127,12 @@ func (p *productService) GetByID(ctx context.Context, req *productsService.GetBy
 	return &productsService.GetByIDResponse{Product: prod.ToProto()},nil
 }
 
-func (p *productService) Search(ctx context.Context, req *productsService.SearchReq) (*productsService.SearchResponse,error) {
+func (p *productService) Search(ctx context.Context, req *productsService.SearchRequest) (*productsService.SearchResponse,error) {
 	span,ctx := opentracing.StartSpanFromContext(ctx, "productService.Search")
 	defer span.Finish()
 	searchMessages.Inc()
 
-	products, err := p.productUC.Search(ctx,req.GetSearch(), utils.NewPaginationQuery(int(req.GetSize()),int(req.GetPage())))
+	products, err := p.productUC.Search(ctx,req.GetSearch(), utlis.NewPaginationQuery(int(req.GetSize()),int(req.GetPage())))
 	if err != nil {
 		errorMessages.Inc()
 		p.log.Errorf("primitive.ObjectIDFromHex: %v", err)

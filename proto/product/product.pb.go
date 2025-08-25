@@ -4,7 +4,7 @@
 // 	protoc        v6.32.0--rc1
 // source: product.proto
 
-package product
+package __
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -29,7 +29,7 @@ type Product struct {
 	Name          string                 `protobuf:"bytes,3,opt,name=Name,proto3" json:"Name,omitempty"`
 	Description   string                 `protobuf:"bytes,4,opt,name=Description,proto3" json:"Description,omitempty"`
 	Price         float64                `protobuf:"fixed64,5,opt,name=Price,proto3" json:"Price,omitempty"`
-	ImageURl      string                 `protobuf:"bytes,6,opt,name=ImageURl,proto3" json:"ImageURl,omitempty"`
+	ImageURL      string                 `protobuf:"bytes,6,opt,name=ImageURL,proto3" json:"ImageURL,omitempty"`
 	Photos        []string               `protobuf:"bytes,7,rep,name=Photos,proto3" json:"Photos,omitempty"`
 	Quantity      int64                  `protobuf:"varint,8,opt,name=Quantity,proto3" json:"Quantity,omitempty"`
 	Rating        int64                  `protobuf:"varint,9,opt,name=Rating,proto3" json:"Rating,omitempty"`
@@ -104,9 +104,9 @@ func (x *Product) GetPrice() float64 {
 	return 0
 }
 
-func (x *Product) GetImageURl() string {
+func (x *Product) GetImageURL() string {
 	if x != nil {
-		return x.ImageURl
+		return x.ImageURL
 	}
 	return ""
 }
@@ -566,7 +566,7 @@ func (x *GetByIDResponse) GetProduct() *Product {
 	return nil
 }
 
-type SearchReq struct {
+type SearchRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Search        string                 `protobuf:"bytes,1,opt,name=Search,proto3" json:"Search,omitempty"`
 	Page          int64                  `protobuf:"varint,2,opt,name=page,proto3" json:"page,omitempty"`
@@ -575,20 +575,20 @@ type SearchReq struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SearchReq) Reset() {
-	*x = SearchReq{}
+func (x *SearchRequest) Reset() {
+	*x = SearchRequest{}
 	mi := &file_product_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SearchReq) String() string {
+func (x *SearchRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SearchReq) ProtoMessage() {}
+func (*SearchRequest) ProtoMessage() {}
 
-func (x *SearchReq) ProtoReflect() protoreflect.Message {
+func (x *SearchRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_product_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -600,26 +600,26 @@ func (x *SearchReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SearchReq.ProtoReflect.Descriptor instead.
-func (*SearchReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use SearchRequest.ProtoReflect.Descriptor instead.
+func (*SearchRequest) Descriptor() ([]byte, []int) {
 	return file_product_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *SearchReq) GetSearch() string {
+func (x *SearchRequest) GetSearch() string {
 	if x != nil {
 		return x.Search
 	}
 	return ""
 }
 
-func (x *SearchReq) GetPage() int64 {
+func (x *SearchRequest) GetPage() int64 {
 	if x != nil {
 		return x.Page
 	}
 	return 0
 }
 
-func (x *SearchReq) GetSize() int64 {
+func (x *SearchRequest) GetSize() int64 {
 	if x != nil {
 		return x.Size
 	}
@@ -723,7 +723,7 @@ const file_product_proto_rawDesc = "" +
 	"\x04Name\x18\x03 \x01(\tR\x04Name\x12 \n" +
 	"\vDescription\x18\x04 \x01(\tR\vDescription\x12\x14\n" +
 	"\x05Price\x18\x05 \x01(\x01R\x05Price\x12\x1a\n" +
-	"\bImageURl\x18\x06 \x01(\tR\bImageURl\x12\x16\n" +
+	"\bImageURL\x18\x06 \x01(\tR\bImageURL\x12\x16\n" +
 	"\x06Photos\x18\a \x03(\tR\x06Photos\x12\x1a\n" +
 	"\bQuantity\x18\b \x01(\x03R\bQuantity\x12\x16\n" +
 	"\x06Rating\x18\t \x01(\x03R\x06Rating\x128\n" +
@@ -761,8 +761,8 @@ const file_product_proto_rawDesc = "" +
 	"\x0eGetByIDRequest\x12\x1c\n" +
 	"\tProductID\x18\x01 \x01(\tR\tProductID\"=\n" +
 	"\x0fGetByIDResponse\x12*\n" +
-	"\aProduct\x18\x01 \x01(\v2\x10.product.ProductR\aProduct\"K\n" +
-	"\tSearchReq\x12\x16\n" +
+	"\aProduct\x18\x01 \x01(\v2\x10.product.ProductR\aProduct\"O\n" +
+	"\rSearchRequest\x12\x16\n" +
 	"\x06Search\x18\x01 \x01(\tR\x06Search\x12\x12\n" +
 	"\x04page\x18\x02 \x01(\x03R\x04page\x12\x12\n" +
 	"\x04size\x18\x03 \x01(\x03R\x04size\"\xbe\x01\n" +
@@ -776,12 +776,12 @@ const file_product_proto_rawDesc = "" +
 	"\x04Page\x18\x03 \x01(\x03R\x04Page\x12\x12\n" +
 	"\x04Size\x18\x04 \x01(\x03R\x04Size\x12\x18\n" +
 	"\aHasMore\x18\x05 \x01(\bR\aHasMore\x12*\n" +
-	"\aProduct\x18\x06 \x03(\v2\x10.product.ProductR\aProduct2\x84\x02\n" +
+	"\aProduct\x18\x06 \x03(\v2\x10.product.ProductR\aProduct2\x88\x02\n" +
 	"\x0fproductsService\x12;\n" +
 	"\x06Create\x12\x16.product.CreateRequest\x1a\x17.product.CreateResponse\"\x00\x12;\n" +
 	"\x06Update\x12\x16.product.UpdateRequest\x1a\x17.product.UpdateResponse\"\x00\x12>\n" +
-	"\aGetByID\x12\x17.product.GetByIDRequest\x1a\x18.product.GetByIDResponse\"\x00\x127\n" +
-	"\x06Search\x12\x12.product.SearchReq\x1a\x17.product.SearchResponse\"\x00B\x04Z\x02./b\x06proto3"
+	"\aGetByID\x12\x17.product.GetByIDRequest\x1a\x18.product.GetByIDResponse\"\x00\x12;\n" +
+	"\x06Search\x12\x16.product.SearchRequest\x1a\x17.product.SearchResponse\"\x00B\x04Z\x02./b\x06proto3"
 
 var (
 	file_product_proto_rawDescOnce sync.Once
@@ -805,7 +805,7 @@ var file_product_proto_goTypes = []any{
 	(*UpdateResponse)(nil),        // 5: product.UpdateResponse
 	(*GetByIDRequest)(nil),        // 6: product.GetByIDRequest
 	(*GetByIDResponse)(nil),       // 7: product.GetByIDResponse
-	(*SearchReq)(nil),             // 8: product.SearchReq
+	(*SearchRequest)(nil),         // 8: product.SearchRequest
 	(*SearchResponse)(nil),        // 9: product.SearchResponse
 	(*timestamppb.Timestamp)(nil), // 10: google.protobuf.Timestamp
 }
@@ -819,7 +819,7 @@ var file_product_proto_depIdxs = []int32{
 	2,  // 6: product.productsService.Create:input_type -> product.CreateRequest
 	4,  // 7: product.productsService.Update:input_type -> product.UpdateRequest
 	6,  // 8: product.productsService.GetByID:input_type -> product.GetByIDRequest
-	8,  // 9: product.productsService.Search:input_type -> product.SearchReq
+	8,  // 9: product.productsService.Search:input_type -> product.SearchRequest
 	3,  // 10: product.productsService.Create:output_type -> product.CreateResponse
 	5,  // 11: product.productsService.Update:output_type -> product.UpdateResponse
 	7,  // 12: product.productsService.GetByID:output_type -> product.GetByIDResponse

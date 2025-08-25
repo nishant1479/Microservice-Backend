@@ -11,7 +11,7 @@ message Product {
     string Name = 3;
     string Description = 4;
     double Price = 5;
-    string ImageURl = 6;
+    string ImageURL = 6;
     repeated string Photos = 7;
     int64 Quantity = 8;
     int64 Rating = 9;
@@ -61,7 +61,7 @@ message GetByIDResponse {
     Product Product = 1;
 }
 
-message SearchReq {
+message SearchRequest {
     string Search = 1;
     int64 page = 2;
     int64 size = 3;
@@ -83,5 +83,8 @@ service productsService{
 
     rpc GetByID (GetByIDRequest) returns (GetByIDResponse){}
 
-    rpc Search (SearchReq) returns (SearchResponse){}
+    rpc Search (SearchRequest) returns (SearchResponse){}
 }
+
+
+// protoc --go_out=./ --go-grpc_out=./  product.proto

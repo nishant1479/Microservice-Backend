@@ -3,15 +3,18 @@ package usecase
 import (
 	"context"
 	"encoding/json"
-	"log"
 	"time"
 
+	"github.com/go-redis/redis/v8"
 	"github.com/nishant1479/Microservice-Backend/internal/models"
 	"github.com/nishant1479/Microservice-Backend/internal/product"
-	"github.com/nishant1479/Microservice-Backend/pkg/kafka"
+	prodKafka "github.com/nishant1479/Microservice-Backend/internal/product/delivery/kafka"
 	"github.com/nishant1479/Microservice-Backend/pkg/logger"
+	"github.com/nishant1479/Microservice-Backend/pkg/utlis"
 	"github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
+	"github.com/segmentio/kafka-go"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type productUC struct {
@@ -59,11 +62,11 @@ func (p *productUC) Update(ctx context.Context, product *models.Product) (*model
 
 
 
-func (p *productUC) GetByID(ctx context.Context, product *models.Product) (*models.Product,error) {
+func (p *productUC) GetByID(ctx context.Context, productID primitive.ObjectID) (*models.Product,error) {
 	span, ctx := opentracing.StartSpanFromContext(ctx, "productUC.GetById")
 	defer span.Finish()
 	
-	cached, err := p.redisRepo.GetProductByID(ctx,productID)
+	cached, err := p.redisRepo.GetProductByID(ctx, productID)
 	if err != nil && err != redis.Nil {
 		p.log.Errorf("redisRepo.GetByID %v",err)
 	}
@@ -84,10 +87,10 @@ func (p *productUC) GetByID(ctx context.Context, product *models.Product) (*mode
 }
 
 
-func (p *productUC) Search(ctx context.Context, product *models.Product) (*models.Product,error) {
+func (p *productUC) Search(ctx context.Context,  search string, pagination *utlis.Pagination) (*models.ProductsList,error) {
 	span, ctx := opentracing.StartSpanFromContext(ctx, "productUC.Search")
 	defer span.Finish()
-	return p.productRepo.Search(ctx, product)
+	return p.productRepo.Search(ctx, search,pagination)
 }
 
 func (p *productUC) PublishCreate(ctx context.Context, product *models.Product) error {
@@ -99,7 +102,7 @@ func (p *productUC) PublishCreate(ctx context.Context, product *models.Product) 
 		return errors.Wrap(err,"json.Marshal")
 	}
 
-	return &p.prodProducer.PublishCreate(ctx,kafka.Message{
+	return p.prodProducer.PublishCreate(ctx,kafka.Message{
 		Value: prodBytes,
 		Time: time.Now().UTC(),
 	})
